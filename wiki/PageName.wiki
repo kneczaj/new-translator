@@ -3,13 +3,13 @@
 = Usage =
 
 Usage:
-* # The user underlines words which he want to translate on a page.
-# Scans the page and treats it by OCR software which recognize underlined words. I do not want to advertise any here.
-# OCRed document shall be stored in html format.
-# The program loads html files.
-# Translation tree is fetched from a web dictionary.
-# The user chooses proper translations from the tree, and adds them to the result list.
-# Result list can be saved to txt files or in "Pytacz Master" format (http://pytacz-master.softonic.pl/)
+  # The user underlines words which he want to translate on a page.
+  # Scans the page and treats it by OCR software which recognize underlined words. I do not want to advertise any here.
+  # OCRed document shall be stored in html format.
+  # The program loads html files.
+  # Translation tree is fetched from a web dictionary.
+  # The user chooses proper translations from the tree, and adds them to the result list.
+  # Result list can be saved to txt files or in "Pytacz Master" format (http://pytacz-master.softonic.pl/)
 
 Pytacz Master is a vocabulary learning software.
 
