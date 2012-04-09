@@ -15,5 +15,8 @@ Pytacz Master is a vocabulary learning software.
 
 Now there is only Polish, English and German language.
 
+= Examples =
+There are some html examples in 'data' directory in repo. You can test program on them before you instal OCR software.
+
 = To do =
 Find free OCR which recognize underlining and integrate the program with it.
