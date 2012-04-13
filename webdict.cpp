@@ -91,6 +91,10 @@ void WebDict::translateAll()
 
 void WebDict::translate(const QModelIndex &index)
 {
+	// remove old translation if exists
+	if (model->rowCount(index))
+		model->removeRows(0, model->rowCount(index), index);
+	
 	mutex.lock();
 	downloadQueue.enqueue(index);
 	mutex.unlock();
@@ -136,7 +140,7 @@ void WebDict::run()
 			QPair<QByteArray*, QModelIndex*> data = parserQueue.dequeue();
 			mutex.unlock();
 			parse(data.first, *(data.second));
-			model->simplify(*(data.second));
+			//model->simplify(*(data.second));
 			delete data.first;
 			delete data.second;
 			mutex.lock();

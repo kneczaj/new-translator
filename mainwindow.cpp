@@ -115,8 +115,8 @@ void MainWindow::on_dict_currentIndexChanged(int index)
 
 void MainWindow::on_openButton_clicked()
 {
-	//fileName = QFileDialog::getOpenFileName(this, tr("Open file"), "..", tr("Html (*.htm *.html)"));
-	fileName = "../new-translator/data/deutsch.html";
+	fileName = QFileDialog::getOpenFileName(this, tr("Open file"), "..", tr("Html (*.htm *.html)"));
+	//fileName = "../new-translator/data/deutsch.html";
 	setWindowTitle(baseWindowTitle+" - "+fileName);
 	
 	on_newButton_clicked();
