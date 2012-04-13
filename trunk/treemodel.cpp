@@ -52,7 +52,7 @@ TreeModel::~TreeModel()
 	delete rootItem;
 }
 
-int TreeModel::columnCount(const QModelIndex & /* parent */) const
+int TreeModel::columnCount(const QModelIndex & parent) const
 {
 	return 1;
 }
@@ -83,13 +83,14 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 {
 	if (index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole || TreeItem::validUserRoleNum(role)))
 	{
-		QMutexLocker locker(&mutex);
 		TreeItem *item = getItem(index);
 
 		if (role == Qt::EditRole)
 		{
+			mutex.lock();
 			item->setData(value, role);
 			emit dataChanged(index, index);
+			mutex.unlock();
 
 			// edit of a main word reqiures reloading of the translation tree under it
 			if (item->parent() == rootItem)
@@ -106,9 +107,11 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 			// (the word is not always recognized properly by OCR software)
 			if (role == Qt::DisplayRole)
 				role = Qt::EditRole;
-
+			
+			mutex.lock();
 			item->setData(value, role);
 			emit dataChanged(index, index);
+			mutex.unlock();
 		}
 
 		return 1;
@@ -136,6 +139,7 @@ void TreeModel::clearTranslations()
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
+	// only the first level of words is editable
 	Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 	if (index.parent() == QModelIndex())
 		flags |= Qt::ItemIsEditable;
@@ -229,7 +233,8 @@ QModelIndex TreeModel::addContext(const QString &context, const QModelIndex &par
 	return newItem;
 }
 
-QModelIndex TreeModel::addStdWord(const QString &word, const Type type, const QModelIndex &parent, const QString &plural, const WordClass wordClass, const Gender gender)
+QModelIndex TreeModel::addStdWord(const QString &word, const Type type, const QModelIndex &parent, 
+								  const QString &plural, const WordClass wordClass, const Gender gender)
 {
 	QModelIndex newItem = addData(parent);
 
@@ -247,7 +252,8 @@ QModelIndex TreeModel::addStdWord(const QString &word, const Type type, const QM
 	return newItem;
 }
 
-QModelIndex TreeModel::addTargetWord(const QString &word, const QModelIndex &parent, const QString &plural, const WordClass wordClass, const Gender gender)
+QModelIndex TreeModel::addTargetWord(const QString &word, const QModelIndex &parent, 
+									 const QString &plural, const WordClass wordClass, const Gender gender)
 {
 	QModelIndex newItem = addStdWord(word, TARGET, parent, plural, wordClass, gender);
 	setData(newItem, targetLang, TreeItem::LangRole);
