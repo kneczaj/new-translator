@@ -55,10 +55,12 @@ WebDict::~WebDict()
 
 void WebDict::setLang(const QString &sourceLang, const QString &targetLang)
 {
-	this->sourceLang = sourceLang.toLower();
-	this->targetLang = targetLang.toLower();
+	QString sourceLangLc = sourceLang.toLower();
+	QString targetLangLc = targetLang.toLower();
+	this->sourceLang = sourceLangLc;
+	this->targetLang = targetLangLc;
 	
-	model->setLang(sourceLang, targetLang);
+	model->setLang(sourceLangLc, targetLangLc);
 	
 	initialized = 1;
 }
@@ -134,7 +136,7 @@ void WebDict::run()
 			QPair<QByteArray*, QModelIndex*> data = parserQueue.dequeue();
 			mutex.unlock();
 			parse(data.first, *(data.second));
-			//model->simplify(*(data.second));
+			model->simplify(*(data.second));
 			delete data.first;
 			delete data.second;
 			mutex.lock();

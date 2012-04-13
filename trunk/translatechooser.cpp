@@ -76,10 +76,13 @@ void TranslateChooser::keyPressEvent(QKeyEvent *event)
 	else
 	{
 		QTreeView::keyPressEvent(event);
-
-		// handle word change on the big bold label
-		QModelIndex index = currentIndex();
-		if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) && index.parent() == QModelIndex())
-			emit wordChanged(index.data().toString());
 	}
+}
+
+void TranslateChooser::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+	// handle word change on the big bold label
+	if (current.parent() == QModelIndex())
+		emit wordChanged(current.data().toString());
+	QTreeView::currentChanged(current, previous);
 }

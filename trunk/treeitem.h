@@ -43,7 +43,7 @@
 #include <QVariant>
 #include <QVector>
 
-enum Type { STD=0, MAIN /* wyraz pierwszego stopnia */, SPEECHPART, CONTEXT, TARGET };
+enum Type { STD=0, MAIN, SPEECHPART, CONTEXT, TARGET };
 enum Gender { GNA=0, M, F, N };
 enum WordClass { WNA=0, NOUN, VERB, ADJ, ADV, PRON, CONJ };
 

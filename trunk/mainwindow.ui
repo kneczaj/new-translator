@@ -146,7 +146,10 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Translations are fetched from Pons.eu and they are property of PONS GmbH,</string>
+       <string>Translations are fetched from mobile.pons.eu and they are property of PONS GmbH. &lt;a href=&quot;http://www.pons.eu/specials/cms/mobile/en/terms/&quot;&gt;Terms and conditions of use&lt;/a&gt;</string>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
       </property>
      </widget>
     </item>

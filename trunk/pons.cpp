@@ -104,7 +104,7 @@ void Pons::parse(QByteArray *data, const QModelIndex &index)
 		// context
 		bool bSense = 0;
 		while (section.contains("target"))
-		{	
+		{
 			QString findSense = detach(section,"<tr id");
 			QString sense = getSense(findSense);
 			
@@ -153,7 +153,7 @@ void Pons::finalLevel(const QString &text, const QList<QModelIndex> &parents)
 	
 	while (pos != -1)
 	{
-		QModelIndex idx = model->addStdWord(source, parents.last());
+		QModelIndex idx = model->addStdWord(source, STD, parents.last());
 		
 		// ------ translation ------------
 		if (pos != -1)
@@ -202,13 +202,13 @@ bool Pons::header(const QString &text, const QString &sourceWord, QList<QModelIn
 			
 			// if there is info about speech part
 			if (speechPart)
-				newItem = model->addWordClass(speechPart, parents.last());
+				newItem = model->addStdWord("", SPEECHPART, parents.last(), pl, speechPart, g);
 			else
 				// nothing will be added
 				parents.append(parents.last());
 		}
 		else
-			newItem = model->addStdWord(word, parents.last(), pl, speechPart, g);
+			newItem = model->addStdWord(word, STD, parents.last(), pl, speechPart, g);
 		
 		// adds new item to the parent list
 		parents.append(newItem);

@@ -49,6 +49,7 @@ public:
     explicit TranslateChooser(QWidget *parent = 0);
 protected:
 	void keyPressEvent(QKeyEvent *event);
+	void currentChanged(const QModelIndex &current, const QModelIndex &previous);
 signals:
 	void addResult(QString source, QString result);
 	void wordChanged(QString word);
