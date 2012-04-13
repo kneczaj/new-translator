@@ -115,10 +115,25 @@ QVariant TreeItem::data(const int role) const
 void TreeItem::setData(const QVariant &data, const int role)
 {
 	if (role == Qt::EditRole)
-		d[0] = data;
+	{
+		QString s = data.toString();
+		d[0] = s;
+	}
 
 	else if (validUserRoleNum(role))
+	{		
 		d[role - (int)Qt::UserRole + 1] = data;
+		
+		// nouns in german starts with a capital letter
+		if (lang()=="de" && role == WordClassRole && (WordClass)data.toInt() == NOUN)
+		{
+			QString s = d[0].toString();
+			QChar firstChar = s.at(0).toUpper();
+			s.remove(0,1);
+			s.prepend(firstChar);
+			d[0] = s;
+		}
+	}
 
 }
 

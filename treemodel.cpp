@@ -128,7 +128,8 @@ void TreeModel::clearTranslations()
 	int i = 0;
 	while ((child = index(i,0)) != QModelIndex())
 	{
-		removeRows(0, rowCount(child), child);
+		if (rowCount(child))
+			removeRows(0, rowCount(child), child);
 		i++;
 	}
 }
@@ -213,6 +214,7 @@ QModelIndex TreeModel::addMainWord(const QString &word)
 
 	setData(newItem, MAIN, TreeItem::TypeRole);
 	setData(newItem, word, TreeItem::WordRole);
+	setData(newItem, sourceLang, TreeItem::LangRole);
 
 	return newItem;
 }
@@ -227,14 +229,14 @@ QModelIndex TreeModel::addContext(const QString &context, const QModelIndex &par
 	return newItem;
 }
 
-QModelIndex TreeModel::addStdWord(const QString &word, const QModelIndex &parent, const QString &plural, const WordClass wordClass, const Gender gender)
+QModelIndex TreeModel::addStdWord(const QString &word, const Type type, const QModelIndex &parent, const QString &plural, const WordClass wordClass, const Gender gender)
 {
 	QModelIndex newItem = addData(parent);
 
-	setData(newItem, STD, TreeItem::TypeRole);
-	setData(newItem, word, TreeItem::WordRole);
-
+	setData(newItem, type, TreeItem::TypeRole);
 	// if not set, they are inherited using the constructor
+	if (!word.isEmpty())
+		setData(newItem, word, TreeItem::WordRole);
 	if (!plural.isEmpty())
 		setData(newItem, plural, TreeItem::PluralRole);
 	if (wordClass)
@@ -247,20 +249,8 @@ QModelIndex TreeModel::addStdWord(const QString &word, const QModelIndex &parent
 
 QModelIndex TreeModel::addTargetWord(const QString &word, const QModelIndex &parent, const QString &plural, const WordClass wordClass, const Gender gender)
 {
-	QModelIndex newItem = addStdWord(word, parent, plural, wordClass, gender);
-
-	setData(newItem, TARGET, TreeItem::TypeRole);
+	QModelIndex newItem = addStdWord(word, TARGET, parent, plural, wordClass, gender);
 	setData(newItem, targetLang, TreeItem::LangRole);
-
-	return newItem;
-}
-
-QModelIndex TreeModel::addWordClass(const WordClass wordClass, const QModelIndex &parent)
-{
-	QModelIndex newItem = addData(parent);
-
-	setData(newItem, wordClass, TreeItem::WordClassRole);
-	setData(newItem, SPEECHPART, TreeItem::TypeRole);
 
 	return newItem;
 }

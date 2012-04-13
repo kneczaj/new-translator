@@ -78,9 +78,8 @@ public:
 	QModelIndex addData(const QModelIndex &parent);
 	QModelIndex addMainWord(const QString &word);
 	QModelIndex addContext(const QString &context, const QModelIndex &parent);
-	QModelIndex addWordClass(const WordClass wordClass, const QModelIndex &parent);
 
-	QModelIndex addStdWord(const QString &word, const QModelIndex &parent,
+	QModelIndex addStdWord(const QString &word, const Type type, const QModelIndex &parent,
 						   const QString &plural = QString(), const WordClass wordClass = WNA, const Gender gender = GNA);
 
 	QModelIndex addTargetWord(const QString &word, const QModelIndex &parent,

@@ -43,11 +43,11 @@
 
 namespace HtmlParser
 {
-	// TO DO:
-	// get rid of these functions and substitude by QRegExp where possible
-
 	// returns underlined words
 	QStringList& getUnderlined(QString text);
+	
+	// TO DO:
+	// get rid of extract, goBefore, goAfter and substitude by QRegExp where possible
 	
 	// extracts text between 'startMark' and 'endMark' from 'text' starting at 'pos'
 	QString extract(const QString &text, const QString &startMark, const QString &endMark, int &pos);
