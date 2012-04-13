@@ -94,12 +94,9 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 			// edit of a main word reqiures reloading of the translation tree under it
 			if (item->parent() == rootItem)
 			{
-				beginRemoveRows(index, 0, item->childrenCount() - 1);
-				item->removeChildren(0, item->childrenCount());
-				endRemoveRows();
-
+				if (item->childrenCount())
+					removeRows(0, item->childrenCount(), index);
 				emit translate(index);
-				// dataChanged is emitted from translate()
 			}
 		}
 		else
@@ -118,6 +115,22 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 	}
 	else
 		return 0;
+}
+
+void TreeModel::clear()
+{
+	removeRows(0, rowCount());
+}
+
+void TreeModel::clearTranslations()
+{
+	QModelIndex child;
+	int i = 0;
+	while ((child = index(i,0)) != QModelIndex())
+	{
+		removeRows(0, rowCount(child), child);
+		i++;
+	}
 }
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
@@ -171,16 +184,15 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
 
 bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent)
 {
-	QMutexLocker locker(&mutex);
-
 	TreeItem *parentItem = getItem(parent);
-	bool success;
+	QMutexLocker locker(&mutex);
+	bool result;
 	
 	beginRemoveRows(parent, position, position + rows - 1);
-	success = parentItem->removeChildren(position, rows);
+	result = parentItem->removeChildren(position, rows);
 	endRemoveRows();
 	
-	return success;
+	return result;
 }
 
 int TreeModel::rowCount(const QModelIndex &parent) const
@@ -259,9 +271,9 @@ void TreeModel::simplify(const QModelIndex &index)
 	TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
 	//item->sortChildren();
 	
-	// uruchamia upraszczanie (opuszczanie) wierzchołków o zawartości identycznej jak słowo źródłowe
+	// runs simplifing (dropping) nodes with identical content as the source word
 	for (int j=0; j < item->childrenCount(); j++)
-		// upraszczanie dopiero na 2 warstwie - dzieci wierzchołków źródł.
+		// only on the second layer - children of source word nodes
 		if(item->child(j)->simplify(item->data().toString()))
 			j--;
 }

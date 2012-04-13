@@ -51,7 +51,6 @@ WebDict::WebDict(TreeModel *model, QObject *parent) :  QThread(parent), model(mo
 
 WebDict::~WebDict()
 {
-	//disconnect(model, SIGNAL(translate(QModelIndex)), this, SLOT(translate(QModelIndex)));
 }
 
 void WebDict::setLang(const QString &sourceLang, const QString &targetLang)
@@ -72,6 +71,8 @@ void WebDict::addWords(const QStringList &list)
 
 void WebDict::translateAll()
 {
+	model->clearTranslations();
+
 	QModelIndex child;
 	int i = 0;
 	mutex.lock();
@@ -127,19 +128,19 @@ void WebDict::run()
 	forever
 	{
 		mutex.lock();
-		// parse jobs
+		// parse
 		while (!parserQueue.isEmpty())
 		{
 			QPair<QByteArray*, QModelIndex*> data = parserQueue.dequeue();
 			mutex.unlock();
 			parse(data.first, *(data.second));
-			model->simplify(*(data.second));
+			//model->simplify(*(data.second));
 			delete data.first;
 			delete data.second;
 			mutex.lock();
 		}
 		
-		// download jobs - run in background using QHttp, which has its own thread
+		// download - run in background using QHttp, which has its own thread
 		while ( !downloadQueue.isEmpty() )
 		{
 			QModelIndex item = downloadQueue.dequeue();
