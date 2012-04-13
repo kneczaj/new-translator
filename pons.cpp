@@ -101,7 +101,7 @@ void Pons::parse(QByteArray *data, const QModelIndex &index)
 		QString section = detach(text, "(romhead|$)");
 		exactWordFound = header(detach(section,"</h2>"), word, parents);
 		
-		// kontekst
+		// context
 		bool bSense = 0;
 		while (section.contains("target"))
 		{	

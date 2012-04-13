@@ -54,14 +54,17 @@ TreeItem::TreeItem(TreeItem *parentItem)
 	// by default copy parent
 	if (parentItem)
 	{
+		d[0] = parentItem->data(WordRole);
 		for (int i = 0; i< userRolesNum; i++)
-			d[i] = parentItem->data(i);
+			d[i+1] = parentItem->data(Qt::UserRole+i);
 	}
 	// if no parent init by default values
 	else
-	{
-		d[GenderRole - Qt::UserRole +1]= GNA;
+	{	
+		for (int i=0; i<4; i++)
+			d[i] = "";
 		d[WordClassRole - Qt::UserRole +1] = WNA;
+		d[GenderRole - Qt::UserRole +1]= GNA;
 		d[TypeRole - Qt::UserRole +1] = STD;
 	}
 }
@@ -130,17 +133,17 @@ QString TreeItem::display() const
 		switch (wordClass())
 		{
 		case NOUN:
-			return "Rzeczownik";
+			return "Noun";
 		case VERB:
-			return "Czasownik";
+			return "Verb";
 		case ADJ:
-			return "Przymiotnik";
+			return "Adjective";
 		case ADV:
-			return "Przysłówek";
+			return "Adverb";
 		case PRON:
-			return "Zaimek";
+			return "Pronoun";
 		case CONJ:
-			return "Łącznik";
+			return "Conjunctive";
 		default:
 			return "NA";
 		}
@@ -229,23 +232,22 @@ void TreeItem::skip(TreeItem *inheritor)
 }
 
 bool TreeItem::simplify(const QString &s)
-// zwraca true jeśli doszło do uproszczenia
+// returnes true if simplification has happened
 {
-	// uruchamia rekurencyjnie na wszystkich dzieciach
+	// runs recursively on all children
 	int count = childItems.count();
 	for (int i=0; i<count && i<childrenCount(); i++)
 		if(childItems.at(i)->simplify(s))
 			i--;
 	
-	// jeśli rekurencyjnie usunięto wszystkie dzieci
-	// z wierzchołka-części mowy to też go usuń
+	// if the all children were recursively deleted
+	// from speechpart node, delete it too
 	if ((type() == SPEECHPART) && !childrenCount())
 	{
 		parentItem->removeChildren(childNumber(), 1);
 		return true;
 	}
-	// łączy wierzchołki bliźniacze z takimi samymi słowami
-	//sortChildren();
+	// merge twin nodes - with same words
 	if (childNumber() < parentItem->childrenCount() - 1)
 	{
 		TreeItem *next = parentItem->child(childNumber()+1);
@@ -255,14 +257,14 @@ bool TreeItem::simplify(const QString &s)
 			return true;
 		}
 	}
-	// usuwa wierzchołki z wyrazem takim samym jak źródłowy lub takim jak rodzic
+	// deletes nodes with the same source word as the parent
 	if (word().toLower() == s.toLower() || word().toLower() == parentItem->data().toString().toLower())
 	{
 		skip(parentItem);
 		return true;
 	}
-	// przesuwa wierzchołek poziom do góry jeśli rodzicem jest część mowy
-	// a wierzchołek nie jest ostatecznym tłumaczeniem
+	// moves node one level up if the parent is not a speech part
+	// and the node is not an final translation
 	if ((parentItem->type() == SPEECHPART) && childrenCount())
 	{
 		TreeItem* oldParent = parentItem;

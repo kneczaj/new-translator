@@ -52,19 +52,19 @@ void TranslateChooser::keyPressEvent(QKeyEvent *event)
 		QModelIndex index = currentIndex();
 		if (index.child(0,0) == QModelIndex() && index.parent() != QModelIndex())
 		{
-			// odnajdowanie roota
+			// find root
 			QModelIndex root = index;
 			while (root.parent() != QModelIndex())
 				root = root.parent();
 			
-			// zmiana położenia kursora
+			// change cursor position
 			QModelIndex newIndex = root.sibling( root.row()+1, 0);
 			setCurrentIndex(newIndex);
 			
 			QString result = index.data().toString();
 			QModelIndex sourceIndex = index.parent();
 			
-			// odnajdowanie słowa źródłowego
+			// find source word
 			while (sourceIndex.data(Qt::UserRole).toInt() != STD && sourceIndex.data(Qt::UserRole).toInt() != MAIN)
 				sourceIndex = sourceIndex.parent();
 			QString source = sourceIndex.data().toString();

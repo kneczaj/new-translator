@@ -70,7 +70,7 @@ public:
 		TypeRole		= Qt::UserRole + 5
 	};
 	static const int userRolesNum = 6;
-	inline static bool validUserRoleNum(const int role);
+	static bool validUserRoleNum(const int role);
 
 	// -------------------------------------------------------
 

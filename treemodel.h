@@ -58,6 +58,12 @@ public:
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	QModelIndex parent(const QModelIndex &index) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
+
+	// clear whole data from the model
+	void clear();
+
+	// clear whole data, but the first level of childeren which are source words
+	void clearTranslations();
 	
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const;
