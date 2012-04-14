@@ -120,6 +120,9 @@ void MainWindow::on_openButton_clicked()
 {
 	fileName = QFileDialog::getOpenFileName(this, tr("Open file"), "..", tr("Html (*.htm *.html)"));
 	//fileName = "../new-translator/data/deutsch.html";
+	
+	if (fileName.isEmpty())
+		return;
 	setWindowTitle(baseWindowTitle+" - "+fileName);
 	
 	ui->wordLabel->setText("Loading... please wait");
@@ -171,6 +174,8 @@ void MainWindow::on_saveButton_clicked()
 	if (d.exec())
 	{
 		QString fileName = d.selectedFiles()[0];
+		if (fileName.isEmpty())
+			return;
 		QString fileType = d.selectedNameFilter();
 		
 		// Open file for write
