@@ -122,7 +122,7 @@ void WebDict::httpFinished(int id, bool error)
 		{
 			QByteArray *r = new QByteArray(http->readAll());
 			mutex.lock();
-			parserQueue.enqueue( QPair<QByteArray*, QModelIndex*>(r, replyList.at(i).word ) );
+			parserQueue.enqueue( QPair<QByteArray*, QModelIndex>(r, replyList.at(i).word ) );
 			mutex.unlock();
 			replyList.removeAt(i);
 		}
@@ -137,12 +137,11 @@ void WebDict::run()
 		// parse
 		while (!parserQueue.isEmpty())
 		{
-			QPair<QByteArray*, QModelIndex*> data = parserQueue.dequeue();
+			QPair<QByteArray*, QModelIndex> data = parserQueue.dequeue();
 			mutex.unlock();
-			parse(data.first, *(data.second));
-			//model->simplify(*(data.second));
+			parse(*data.first, data.second);
+			//model->simplify(data.second);
 			delete data.first;
-			delete data.second;
 			mutex.lock();
 		}
 		
@@ -154,7 +153,7 @@ void WebDict::run()
 			QString word = item.data(Qt::EditRole).toString();
 			http->setHost(website.host());
 			mutex.lock();
-			replyList.append( ReplayListItem(query(word), new QModelIndex(item) ) );
+			replyList.append( ReplayListItem(query(word), QModelIndex(item) ) );
 		}
 		
 		// all work completed

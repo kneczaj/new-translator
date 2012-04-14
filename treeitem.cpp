@@ -54,24 +54,35 @@ TreeItem::TreeItem(TreeItem *parentItem)
 	// by default copy parent
 	if (parentItem)
 	{
-		d[0] = parentItem->data(WordRole);
-		for (int i = 0; i< userRolesNum; i++)
-			d[i+1] = parentItem->data(Qt::UserRole+i);
+		d = parentItem->itemData();
 	}
 	// if no parent init by default values
 	else
 	{	
-		for (int i=0; i<4; i++)
+		d[WordRole] = "";
+		for (int i=Qt::UserRole; i<Qt::UserRole+4; i++)
 			d[i] = "";
-		d[WordClassRole - Qt::UserRole +1] = WNA;
-		d[GenderRole - Qt::UserRole +1]= GNA;
-		d[TypeRole - Qt::UserRole +1] = STD;
+		
+		d[WordClassRole] = WNA;
+		d[GenderRole]= GNA;
+		d[TypeRole] = STD;
 	}
 }
 
 TreeItem::~TreeItem()
 {
 	qDeleteAll(childItems);
+}
+
+QMap<int, QVariant> TreeItem::itemData() const
+{
+	return d;
+}
+
+bool TreeItem::setItemData(const QMap<int, QVariant> &roles)
+{
+	d = roles;
+	return true;
 }
 
 TreeItem *TreeItem::child(int number)
@@ -99,42 +110,30 @@ bool TreeItem::validUserRoleNum(const int role)
 
 QVariant TreeItem::data(const int role) const
 {
-	if (role == Qt::EditRole)
-		return d[0];
-
-	else if (validUserRoleNum(role))
-		return d[role - Qt::UserRole + 1];
-
-	else if (role == Qt::DisplayRole)
+	if (role == Qt::DisplayRole)
 		return display();
-
+	else if (role == Qt::EditRole || validUserRoleNum(role))
+		return d[role];
 	else
 		return QVariant();
 }
 
 void TreeItem::setData(const QVariant &data, const int role)
 {
-	if (role == Qt::EditRole)
+	if (role == Qt::EditRole || validUserRoleNum(role))
 	{
-		QString s = data.toString();
-		d[0] = s;
-	}
-
-	else if (validUserRoleNum(role))
-	{		
-		d[role - (int)Qt::UserRole + 1] = data;
-		
+		d[role] = data;	
 		// nouns in german starts with a capital letter
 		if (lang()=="de" && role == WordClassRole && (WordClass)data.toInt() == NOUN)
 		{
-			QString s = d[0].toString();
+			QString s = word();
 			QChar firstChar = s.at(0).toUpper();
 			s.remove(0,1);
 			s.prepend(firstChar);
-			d[0] = s;
+			d[WordRole] = s;
 		}
+		dsp = display();
 	}
-
 }
 
 QString TreeItem::display() const
@@ -234,63 +233,6 @@ bool TreeItem::detachChildren(int position, int count)
 	return true;
 }
 
-void TreeItem::sortChildren()
-{
-	qSort(childItems.begin(), childItems.end(), lessThan);
-}
-
-void TreeItem::skip(TreeItem *inheritor)
-{
-	inheritor->addChildren(childItems);
-	this->detachChildren(0, childrenCount());
-	parentItem->removeChildren(childNumber(), 1);
-}
-
-bool TreeItem::simplify(const QString &s)
-// returnes true if simplification has happened
-{
-	// runs recursively on all children
-	int count = childItems.count();
-	for (int i=0; i<count && i<childrenCount(); i++)
-		if(childItems.at(i)->simplify(s))
-			i--;
-	
-	// if the all children were recursively deleted
-	// from speechpart node, delete it too
-	if ((type() == SPEECHPART) && !childrenCount())
-	{
-		parentItem->removeChildren(childNumber(), 1);
-		return true;
-	}
-	// merge twin nodes - with same words
-	if (childNumber() < parentItem->childrenCount() - 1)
-	{
-		TreeItem *next = parentItem->child(childNumber()+1);
-		if (next && word() == next->data().toString())
-		{
-			skip(next);
-			return true;
-		}
-	}
-	// deletes nodes with the same source word as the parent
-	if (word().toLower() == s.toLower() || word().toLower() == parentItem->data().toString().toLower())
-	{
-		skip(parentItem);
-		return true;
-	}
-	// moves node one level up if the parent is not a speech part
-	// and the node is not an final translation
-	if ((parentItem->type() == SPEECHPART) && childrenCount())
-	{
-		TreeItem* oldParent = parentItem;
-		oldParent->detachChildren(childNumber(), 1);
-		oldParent->parent()->addChild(this);
-		return true;
-	}
-	
-	return false;
-}
-
 void TreeItem::setParent(TreeItem* parent)
 {
 	parentItem = parent;
@@ -316,8 +258,4 @@ QString TreeItem::getArticle() const
 		return "";
 }
 
-bool lessThan(TreeItem *a, TreeItem *b)
-{
-	return a->data().toString() < b->data().toString();
-}
 

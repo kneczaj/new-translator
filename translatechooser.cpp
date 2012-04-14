@@ -82,7 +82,11 @@ void TranslateChooser::keyPressEvent(QKeyEvent *event)
 void TranslateChooser::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
 	// handle word change on the big bold label
-	if (current.parent() == QModelIndex())
-		emit wordChanged(current.data().toString());
+	// find main word
+	QModelIndex root = current;
+	while (root.parent() != QModelIndex())
+		root = root.parent();
+
+	emit wordChanged(root.data().toString());
 	QTreeView::currentChanged(current, previous);
 }

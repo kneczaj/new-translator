@@ -51,11 +51,11 @@ class ReplayListItem
 	// element of http replies list
 {
 public:
-	ReplayListItem(int id, QModelIndex *word) : id(id), word(word) {}
-	ReplayListItem(int id) : id(id), word(NULL) {}
+	ReplayListItem(int id, QModelIndex word) : id(id), word(word) {}
+	ReplayListItem(int id) : id(id), word(QModelIndex()) {}
 	
 	int id;
-	QModelIndex *word;
+	QModelIndex word;
 	
 	bool operator ==(ReplayListItem a) { return a.id == id; }
 };
@@ -124,14 +124,14 @@ signals:
 	void completed();
 	
 private:
-	virtual void parse(QByteArray *data, const QModelIndex &index) = 0;
+	virtual void parse(const QByteArray &data, const QModelIndex &index) = 0;
 	virtual int query(const QString &word) = 0;
 	void getTranslation(const QString &list);
 	
 	bool initialized;
 	
 	QQueue<QModelIndex> downloadQueue;
-	QQueue< QPair<QByteArray*, QModelIndex*> > parserQueue;
+	QQueue< QPair<QByteArray*, QModelIndex> > parserQueue;
     QList<ReplayListItem> replyList;
 };
 
