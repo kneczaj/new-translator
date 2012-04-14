@@ -45,9 +45,16 @@ TranslateChooser::TranslateChooser(QWidget *parent) :
 {
 }
 
+void TranslateChooser::setModel(QAbstractItemModel *model)
+{
+	QTreeView::setModel(model);
+	if (model->rowCount())
+		previousMainWord = model->index(0,0);
+}
+
 void TranslateChooser::keyPressEvent(QKeyEvent *event)
 {
-	if (event->key() == Qt::Key_Return)
+	if (event->key() == Qt::Key_Return || event->type() == QEvent::MouseButtonDblClick)
 	{
 		QModelIndex index = currentIndex();
 		if (index.child(0,0) == QModelIndex() && index.parent() != QModelIndex())
@@ -73,20 +80,69 @@ void TranslateChooser::keyPressEvent(QKeyEvent *event)
 		else if (index.child(0,0) != QModelIndex())
 			setCurrentIndex(currentIndex().child(0,0));
 	}
+	else if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up)
+	{
+		QModelIndex prevIndex = currentIndex();
+		QTreeView::keyPressEvent(event);
+		QModelIndex index = currentIndex();
+		
+		// go up hierarchy, to the nearest -1 item change - this is automatic for the down arrow
+		if (event->key() == Qt::Key_Up && index == prevIndex.parent())
+		{
+			while (index.row() == 0)
+				index = index.parent();
+				
+			index = model()->index(index.row()-1, 0, index.parent());
+		}
+		
+		// check whether going up in the herarchy did not effect in changing index to root
+		// if so going down from root by last items effects in rolling 
+		// from the first translation at the first main word to the last translation
+		// at the last main word
+		if (index != QModelIndex())
+		{
+			// go down first items or last items depending on up/down key pressed
+			if (event->key() == Qt::Key_Down)
+				while (model()->rowCount(index))
+					index = model()->index(0, 0, index);
+			else
+				while (model()->rowCount(index))
+					index = model()->index(model()->rowCount(index) - 1, 0, index);
+			setCurrentIndex(index);
+		}
+		else
+			setCurrentIndex(prevIndex);
+	}
 	else
 	{
 		QTreeView::keyPressEvent(event);
 	}
 }
 
+void TranslateChooser::expandWord(const QModelIndex &item)
+{
+	setExpanded(item, true);
+	for (int i=0; i< model()->rowCount(item); i++)
+		expandWord(model()->index(i,0,item));
+}
+
 void TranslateChooser::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
-	// handle word change on the big bold label
 	// find main word
-	QModelIndex root = current;
-	while (root.parent() != QModelIndex())
-		root = root.parent();
-
-	emit wordChanged(root.data().toString());
+	QModelIndex mainWord = current;
+	while (mainWord.parent() != QModelIndex())
+		mainWord = mainWord.parent();
+	
+	if (previousMainWord != mainWord)
+	{
+		// tree auto-expanding
+		setExpanded(previousMainWord, false);
+		previousMainWord = mainWord;
+		expandWord(mainWord);
+		
+		// handle word change on the big bold label
+		emit wordChanged(mainWord.data().toString());
+	}
+	
 	QTreeView::currentChanged(current, previous);
 }

@@ -86,6 +86,8 @@ private slots:
 	void on_newButton_clicked();
 	//void on_deleteRowButton_clicked();
 	
+	void on_helpButton_clicked();
+	
 signals:
 	// translate one item
 	void translate(const QModelIndex &index);

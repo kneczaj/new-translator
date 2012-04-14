@@ -108,6 +108,8 @@ private:
 	QMutex mutex;
 	QString sourceLang;
 	QString targetLang;
+	
+	bool busy;
 };
 
 #endif
