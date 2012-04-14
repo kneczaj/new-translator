@@ -7,14 +7,12 @@ INPUT(
 ./release\treeitem.o
 ./release\resultmodel.o
 ./release\pons.o
-./release\treeview.o
 ./release\translatechooser.o
 ./release\addwordlineedit.o
 ./release\moc_mainwindow.o
 ./release\moc_webdict.o
 ./release\moc_treemodel.o
 ./release\moc_resultmodel.o
-./release\moc_treeview.o
 ./release\moc_translatechooser.o
 ./release\moc_addwordlineedit.o
 );

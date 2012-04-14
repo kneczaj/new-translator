@@ -94,6 +94,9 @@ void MainWindow::inputModelCompleted()
 	if (!ui->translator->model())
 		ui->translator->setModel(transTree);
 	ui->translateButton->setEnabled(true);
+	ui->wordLabel->setText("");
+	ui->translator->setCurrentIndex(transTree->index(0,0));
+	ui->translator->setFocus();
 }
 
 //void MainWindow::on_deleteRowButton_clicked()
@@ -118,6 +121,8 @@ void MainWindow::on_openButton_clicked()
 	fileName = QFileDialog::getOpenFileName(this, tr("Open file"), "..", tr("Html (*.htm *.html)"));
 	//fileName = "../new-translator/data/deutsch.html";
 	setWindowTitle(baseWindowTitle+" - "+fileName);
+	
+	ui->wordLabel->setText("Loading... please wait");
 	
 	on_newButton_clicked();
 	
@@ -253,4 +258,11 @@ void MainWindow::on_newButton_clicked()
 		transTree->clear();
 		ui->translator->setModel(transTree);
 	}
+}
+
+void MainWindow::on_helpButton_clicked()
+{
+	message(QString("Enter or double click on a translation to add it to the result list below.\n")
+			+QString("The most efficient way of navigation is up/down arrows on the keyboard\n")
+			+QString("You can modify words to translate by double clicking on them."));
 }

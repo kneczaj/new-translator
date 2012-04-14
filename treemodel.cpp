@@ -58,8 +58,14 @@ int TreeModel::columnCount(const QModelIndex & parent) const
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
-{	
-	if (index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole || TreeItem::validUserRoleNum(role)))
+{
+	if (role == Qt::FontRole && !rowCount(index))
+	{
+		QFont font;
+		font.setBold(true);
+		return font;
+	}
+	else if (index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole || TreeItem::validUserRoleNum(role)))
 	{
 		TreeItem *item = getItem(index);
 		return item->data(role);
@@ -175,7 +181,7 @@ bool TreeModel::setItemData(const QModelIndex &index, const QMap<int, QVariant> 
 }
 
 int TreeModel::addRows(int rows, const QModelIndex &parent)
-	// returns position of the first row added
+// returns position of the first row added
 {
 	QMutexLocker locker(&mutex);
 	TreeItem *parentItem = getItem(parent);
@@ -288,8 +294,7 @@ void TreeModel::copy(const QModelIndex &from, const QModelIndex &to)
 
 	// add rows for children
 	int itemsNo = rowCount(from);
-	int first = rowCount(to);
-	addRows(itemsNo, to);
+	int first = addRows(itemsNo, to);
 
 	// copy childrent to new rows
 	for (int i = 0; i < itemsNo; i++)
@@ -297,12 +302,11 @@ void TreeModel::copy(const QModelIndex &from, const QModelIndex &to)
 }
 
 void TreeModel::skip(const QModelIndex &item, const QModelIndex &inheritor)
-	// copy children to inheritor, delete itself
+// copy children to inheritor, delete itself
 {
 	int itemsNo = rowCount(item);
-	int first = rowCount(inheritor);
+	int first = addRows(itemsNo, inheritor);
 
-	addRows(itemsNo, inheritor);
 	// copy data to the new items
 	for (int i = 0; i < itemsNo; i++)
 		copy(index(i, 0, item), index(first+i, 0, inheritor));
@@ -314,7 +318,7 @@ void TreeModel::skip(const QModelIndex &item, const QModelIndex &inheritor)
 void TreeModel::simplify(const QModelIndex &item)
 {
 	if (data(item, TreeItem::TypeRole) == MAIN)
-	{	
+	{
 		// runs simplifing (dropping) nodes to simplify tree structure
 		for (int i=0; i < rowCount(item); i++)
 			if(simplify(index(i,0,item), data(item, Qt::DisplayRole).toString()))
@@ -352,7 +356,7 @@ bool TreeModel::simplify(const QModelIndex &item, const QString &s)
 	}
 	
 	QString word = data(item, Qt::DisplayRole).toString().toLower();
-//	// deletes nodes with the same source word as parent's
+	//	// deletes nodes with the same source word as parent's
 	if (word == s.toLower() || word == data(item.parent(), Qt::DisplayRole).toString().toLower())
 	{
 		skip(item, item.parent());

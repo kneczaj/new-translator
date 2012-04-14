@@ -47,6 +47,7 @@ class TranslateChooser : public QTreeView
     Q_OBJECT
 public:
     explicit TranslateChooser(QWidget *parent = 0);
+	void setModel(QAbstractItemModel *model);
 protected:
 	void keyPressEvent(QKeyEvent *event);
 	void currentChanged(const QModelIndex &current, const QModelIndex &previous);
@@ -54,7 +55,10 @@ signals:
 	void addResult(QString source, QString result);
 	void wordChanged(QString word);
 public slots:
-
+	
+private:
+	QModelIndex previousMainWord;
+	void expandWord(const QModelIndex &index);
 };
 
 #endif // TRANSLATECHOOSER_H
