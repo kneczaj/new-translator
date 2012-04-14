@@ -53,7 +53,7 @@ public:
 	
 private:
 	int query(const QString &word);
-	void parse(QByteArray *data, const QModelIndex &index);
+	void parse(const QByteArray &data, const QModelIndex &index);
 	void prepareText(QString &text);
 	
 	// some parsing helper functions

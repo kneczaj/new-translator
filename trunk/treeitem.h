@@ -41,7 +41,8 @@
 
 #include <QList>
 #include <QVariant>
-#include <QVector>
+//#include <QVector>
+#include <QMap>
 
 enum Type { STD=0, MAIN, SPEECHPART, CONTEXT, TARGET };
 enum Gender { GNA=0, M, F, N };
@@ -80,6 +81,9 @@ public:
 
 	QVariant data(const int role = Qt::EditRole) const;
 	QStringList childrenWordList();
+	
+	QMap<int, QVariant> itemData() const;
+	bool setItemData(const QMap<int, QVariant> &roles);
 
 	void setData(const QVariant &data, const int role);
 	void setParent(TreeItem* parent);
@@ -95,15 +99,6 @@ public:
 	int childNumber() const;
 	int childrenCount() const;
 	
-	// skips node -> moves its children to its parent and deletes itself
-	void skip(TreeItem* inheritor);
-
-	// runs simlification using various criteria to have smaller tree with same information included
-	bool simplify(const QString &s);
-
-	// sort alfabetically
-	void sortChildren();
-	
 	// returns text to display -> DisplayRole
 	QString display() const;
 
@@ -112,30 +107,31 @@ public:
 	
 private:
 
+	QString dsp; // debug (content to display)
+
 	// it is not sure that storing items in their original types
 	// rather that QVariant would be better
 	// That solution would speed up internal operations
 	// while the current one speeds up data() and setData()
 
-	QVariant d[userRolesNum + 1]; // data fields
+	QMap<int, QVariant> d;
+	//QVariant d[userRolesNum + 1]; // data fields
 
 	// the indices should be optimezed to constants at the time of compilation
 
-	QString word()		const	{ return d[0].toString(); }
-	QString plural()	const	{ return d[PluralRole - Qt::UserRole + 1].toString(); }
-	QString context()	const	{ return d[ContextRole- Qt::UserRole + 1].toString(); }
-	QString lang()		const	{ return d[LangRole   - Qt::UserRole + 1].toString(); }
+	QString word()		const	{ return d[WordRole].toString(); }
+	QString plural()	const	{ return d[PluralRole].toString(); }
+	QString context()	const	{ return d[ContextRole].toString(); }
+	QString lang()		const	{ return d[LangRole].toString(); }
 
-	Gender gender()		const	{ return (Gender)   d[GenderRole    - Qt::UserRole + 1].toInt(); }
-	Type type()			const	{ return (Type)     d[TypeRole      - Qt::UserRole + 1].toInt(); }
-	WordClass wordClass() const { return (WordClass)d[WordClassRole - Qt::UserRole + 1].toInt(); }
+	Gender gender()		const	{ return (Gender)d[GenderRole].toInt(); }
+	Type type()			const	{ return (Type)d[TypeRole].toInt(); }
+	WordClass wordClass() const { return (WordClass)d[WordClassRole].toInt(); }
 	
 	QString getArticle() const;
 
 	QList<TreeItem*>	childItems;
 	TreeItem*			parentItem;
 };
-
-bool lessThan(TreeItem *a, TreeItem *b);
 
 #endif

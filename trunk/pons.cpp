@@ -83,9 +83,9 @@ void Pons::prepareText(QString &text)
 	text.replace("&#39;","'");
 }
 
-void Pons::parse(QByteArray *data, const QModelIndex &index)
+void Pons::parse(const QByteArray &data, const QModelIndex &index)
 {
-	QString text = QString().fromUtf8(data->data());
+	QString text = QString().fromUtf8(data.data());
 	prepareText(text);
 	
 	QList<QModelIndex> parents;

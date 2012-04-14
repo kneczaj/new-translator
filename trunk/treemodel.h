@@ -70,7 +70,7 @@ public:
 	bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
 	// appends rows
-	void addRows(int rows, const QModelIndex &parent = QModelIndex());
+	int addRows(int rows, const QModelIndex &parent = QModelIndex());
 	
 	bool setData(const QModelIndex &index, const QVariant &value, int role);
 
@@ -84,9 +84,16 @@ public:
 
 	QModelIndex addTargetWord(const QString &word, const QModelIndex &parent,
 							  const QString &plural = QString(), const WordClass wordClass = WNA, const Gender gender = GNA);
+	
+	QMap<int, QVariant>	itemData(const QModelIndex& index) const;
+	bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles);
 
 	// runs simlification using various criteria to have smaller tree with same information included
 	void simplify(const QModelIndex &index);
+	bool simplify(const QModelIndex &index, const QString &s);
+	
+	void skip(const QModelIndex &item, const QModelIndex &inheritor);
+	void copy(const QModelIndex &from, const QModelIndex &to);
 	
 	void setLang(const QString sourceLang, const QString targetLang);
 	
