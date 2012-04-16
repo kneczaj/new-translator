@@ -48,6 +48,7 @@
 
 class Pons : public WebDict
 {
+
 public:
     Pons(TreeModel *model, QObject *parent = 0);
 	
@@ -72,6 +73,7 @@ private:
 	
 	// map to translate WordClass enums to strings
 	QMap<QString, WordClass> strToSpeechPart;
+
 };
 
 #endif // PONS_H

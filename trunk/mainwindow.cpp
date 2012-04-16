@@ -259,9 +259,9 @@ void MainWindow::on_newButton_clicked()
 	// model reset
 	if (transTree->hasChildren())
 	{
-		ui->translator->setModel(NULL);
+		//ui->translator->setModel(NULL);
 		transTree->clear();
-		ui->translator->setModel(transTree);
+		//ui->translator->setModel(transTree);
 	}
 }
 

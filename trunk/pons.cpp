@@ -92,14 +92,12 @@ void Pons::parse(const QByteArray &data, const QModelIndex &index)
 	parents.append(index);
 	QString word = index.data().toString();
 	
-	bool exactWordFound = 0;
-	
 	detach(text, "(romhead|$)");
 	
 	while (text.contains("target"))
 	{
 		QString section = detach(text, "(romhead|$)");
-		exactWordFound = header(detach(section,"</h2>"), word, parents);
+		header(detach(section,"</h2>"), word, parents);
 		
 		// context
 		bool bSense = 0;
@@ -129,20 +127,6 @@ void Pons::parse(const QByteArray &data, const QModelIndex &index)
 	}
 	QModelIndex mainWord = parents.takeFirst();
 
-	// TO DO:
-	// commented because of really ugly method of getting word list -> change it
-
-//	if (!exactWordFound)
-//	{
-//		// change the main word if there is not such a word in the dictionary
-//		// it is probably OCR's mistake
-
-//		// the most probably word
-//		QString baseWord = getBaseWord(word, static_cast<TreeItem*>(mainWord.internalPointer())->childrenWordList());
-
-//		model->setData(mainWord, baseWord, Qt::DisplayRole);
-//	}
-	// else (only if the only child is exactly the same word?)
 	updateMainWordDetails(mainWord);
 }
 
