@@ -128,6 +128,8 @@ void Pons::parse(const QByteArray &data, const QModelIndex &index)
 	QModelIndex mainWord = parents.takeFirst();
 
 	updateMainWordDetails(mainWord);
+
+	model->simplify(index);
 }
 
 void Pons::finalLevel(const QString &text, const QList<QModelIndex> &parents)

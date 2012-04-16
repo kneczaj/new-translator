@@ -139,8 +139,7 @@ void WebDict::run()
 		{
 			QPair<QByteArray*, QModelIndex> data = parserQueue.dequeue();
 			mutex.unlock();
-			parse(*data.first, data.second);
-			//model->simplify(data.second);
+			emit parse_signal(*data.first, data.second);
 			delete data.first;
 			mutex.lock();
 		}
