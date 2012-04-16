@@ -51,10 +51,10 @@ class Pons : public WebDict
 
 public:
     Pons(TreeModel *model, QObject *parent = 0);
+	void parse(const QByteArray &data, const QModelIndex &index);
 	
 private:
 	int query(const QString &word);
-	void parse(const QByteArray &data, const QModelIndex &index);
 	void prepareText(QString &text);
 	
 	// some parsing helper functions

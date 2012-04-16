@@ -87,6 +87,8 @@ private slots:
 	//void on_deleteRowButton_clicked();
 	
 	void on_helpButton_clicked();
+
+	void parse_slot(const QByteArray &data, const QModelIndex &index);
 	
 signals:
 	// translate one item

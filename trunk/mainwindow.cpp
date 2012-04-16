@@ -82,11 +82,17 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->translator, SIGNAL(wordChanged(QString)), this, SLOT(wordChanged(QString)));
 	connect(ui->wordLineEdit, SIGNAL(addWord()), this, SLOT(on_addWordButton_clicked()));
 	connect(this, SIGNAL(translate(QModelIndex)), dict, SLOT(translate(QModelIndex)));
+	connect(dict, SIGNAL(parse_signal(QByteArray,QModelIndex)), this, SLOT(parse_slot(QByteArray,QModelIndex)));
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
+}
+
+void MainWindow::parse_slot(const QByteArray &data, const QModelIndex &index)
+{
+	dict->parse(data, index);
 }
 
 void MainWindow::inputModelCompleted()

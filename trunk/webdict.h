@@ -74,6 +74,7 @@ public:
 	QStringList getLanguages() const { return languages; }
 	
 	void setLang(const QString &sourceLang, const QString &targetLang);
+	virtual void parse(const QByteArray &data, const QModelIndex &index) = 0;
 	
 protected:
 	QStringList languages;
@@ -122,9 +123,11 @@ private slots:
 signals:
 	// all work done
 	void completed();
+
+	// temporary solution to make model modifications in main thread
+	void parse_signal(const QByteArray &data, const QModelIndex &index);
 	
 private:
-	virtual void parse(const QByteArray &data, const QModelIndex &index) = 0;
 	virtual int query(const QString &word) = 0;
 	void getTranslation(const QString &list);
 	
