@@ -67,8 +67,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 	}
 	else if (index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole || TreeItem::validUserRoleNum(role)))
 	{
-		TreeItem *item = getItem(index);
-		return item->data(role);
+		return getItem(index)->data(role);
 	}
 	else
 		return QVariant();
@@ -89,20 +88,23 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 {
 	if (index.isValid() && (role == Qt::DisplayRole || role == Qt::EditRole || TreeItem::validUserRoleNum(role)))
 	{
+		QMutexLocker locker(&mutex);
 		TreeItem *item = getItem(index);
 		
 		if (role == Qt::EditRole)
 		{
-			mutex.lock();
 			item->setData(value, role);
 			emit dataChanged(index, index);
-			mutex.unlock();
 			
 			// edit of a main word reqiures reloading of the translation tree under it
 			if (item->parent() == rootItem)
 			{
 				if (item->childrenCount())
-					removeRows(0, item->childrenCount(), index);
+				{
+					beginRemoveRows(index, 0, item->childrenCount() - 1);
+					item->removeChildren(0, item->childrenCount());
+					endRemoveRows();
+				}
 				emit translate(index);
 			}
 		}
@@ -114,10 +116,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 			if (role == Qt::DisplayRole)
 				role = Qt::EditRole;
 			
-			mutex.lock();
 			item->setData(value, role);
 			emit dataChanged(index, index);
-			mutex.unlock();
 		}
 		
 		return 1;
@@ -145,15 +145,23 @@ void TreeModel::clearTranslations()
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
-	// only the first level of words is editable
-	Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-	if (index.parent() == QModelIndex())
-		flags |= Qt::ItemIsEditable;
-	return flags;
+	if (index == QModelIndex())
+		return Qt::NoItemFlags;
+	else
+	{
+		// only the first level of words is editable
+		Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+		if (index.parent() == QModelIndex())
+			flags |= Qt::ItemIsEditable;
+		return flags;
+	}
 }
 
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
 {
+	if (column != 0)
+		return QModelIndex();
+
 	if (parent.isValid() && parent.column() != 0)
 		return QModelIndex();
 	
@@ -234,8 +242,8 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 
 QModelIndex TreeModel::addData(const QModelIndex &parent)
 {
-	addRows(1, parent);
-	return index(rowCount(parent)-1, 0, parent);
+	int row = addRows(1, parent);
+	return index(row, 0, parent);
 }
 
 QModelIndex TreeModel::addMainWord(const QString &word)

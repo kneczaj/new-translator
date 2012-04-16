@@ -186,7 +186,7 @@ QStringList TreeItem::childrenWordList()
 
 void TreeItem::addChildren(int count)
 {
-	for (int row = 0; row < count; ++row)
+	for (int row = 0; row < count; row++)
 	{
 		TreeItem *item = new TreeItem(this);
 		childItems.append(item);
