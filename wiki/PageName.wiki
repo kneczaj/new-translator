@@ -3,20 +3,18 @@
 = Usage =
 
 Usage:
-  # The user underlines words which he want to translate on a page.
-  # Scans the page and treats it by OCR software which recognize underlined words. I do not want to advertise any here.
+  # Underline words which you want to translate on a page.
+  # Scan the page and treat it by an OCR software which recognize underlined words. Fine Reader 11 can do that job.
   # OCRed document shall be stored in html format.
   # Load the html file to the program.
   # Translation tree is fetched from a web dictionary.
-  # The user chooses proper translations from the tree by pushing Return key, and adds them to the result list.
-  # Result list can be saved to txt files or in "Pytacz Master" format (http://pytacz-master.softonic.pl/)
+  # Choose proper translations from the tree by pushing Return key. This cause translations be added to the result list. The best way to navigate is using up/down arrows. Using mouse is much more slower.
+  # Result list can be saved to txt file or in "Pytacz Master" format (http://pytacz-master.softonic.pl/) which is a vocabulary learning software.
 
-Pytacz Master is a vocabulary learning software.
-
-Now there is only Polish, English and German language.
+Now, there is only Polish, English and German language.
 
 = Examples =
-There are some html examples in 'data' directory in repo. You can test program on them before you instal OCR software.
+There are some html examples in 'data' directory in the repo. You can test the program on them before you install an OCR software.
 
 = To do =
-Find free OCR which recognize underlining and integrate the program with it.
+Find free OCR which recognize underlining and integrate the program with it ;)
