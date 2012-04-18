@@ -335,6 +335,7 @@ void TreeModel::simplify(const QModelIndex &item)
 }
 
 bool TreeModel::simplify(const QModelIndex &item, const QString &s)
+// currently turned off
 {
 	QString display = data(item, Qt::DisplayRole).toString(); // debug
 

@@ -50,6 +50,7 @@ Pons::Pons(TreeModel *model, QObject *parent) : WebDict(model, parent)
 	addLanguage("PL");
 	addLanguage("EN");
 	addLanguage("DE");
+	addLanguage("FR");
 	
 	strToSpeechPart[""] = WNA;
 	strToSpeechPart["NOUN"] = NOUN;
@@ -129,7 +130,7 @@ void Pons::parse(const QByteArray &data, const QModelIndex &index)
 
 	updateMainWordDetails(mainWord);
 
-	model->simplify(index);
+	//model->simplify(index);
 }
 
 void Pons::finalLevel(const QString &text, const QList<QModelIndex> &parents)
