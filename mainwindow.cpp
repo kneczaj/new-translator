@@ -243,7 +243,7 @@ void MainWindow::savePytacz(QTextStream &out) const
 void MainWindow::on_translateButton_clicked()
 {
 	dict->setLang(ui->sourceLanguage->currentText(), ui->targetLanguage->currentText());
-	ui->translator->setModel(NULL);
+	//ui->translator->setModel(NULL);
 	ui->translateButton->setEnabled(false);
 	emit translateAll();
 }

@@ -88,6 +88,7 @@ private slots:
 	
 	void on_helpButton_clicked();
 
+	// temporary solution to make model modifications in main thread
 	void parse_slot(const QByteArray &data, const QModelIndex &index);
 	
 signals:
