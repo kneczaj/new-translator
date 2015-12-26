@@ -1,0 +1,1 @@
+It is a kind of semi-automatic translator intended to make vocabulary learning easier.
